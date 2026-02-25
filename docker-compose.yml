@@ -1,0 +1,28 @@
+
+services:
+  db:
+    image: postgres:16
+    container_name: teleconnect_db
+    environment:
+      POSTGRES_USER: teleuser
+      POSTGRES_PASSWORD: telepass
+      POSTGRES_DB: teleconnect
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: teleconnect_backend
+    environment:
+      DATABASE_URL: postgresql://teleuser:telepass@db:5432/teleconnect
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
